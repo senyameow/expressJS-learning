@@ -15,3 +15,7 @@ app.get('/', (req, res) => {
 app.get('/api/users', (req, res) => {
     res.send([{ id: 1, name: 'senya', age: 18 }, { id: 20 }])
 })
+
+app.get('/api/users/:id', (req, res) => {
+    res.send(req.params)
+})
