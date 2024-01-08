@@ -8,3 +8,10 @@ app.listen(PORT, () => {
     console.log(`port is ${PORT}`)
 })
 
+app.get('/', (req, res) => {
+    res.status(201).send({ message: 'dont give up' })
+})
+
+app.get('/api/users', (req, res) => {
+    res.send([{ id: 1, name: 'senya', age: 18 }, { id: 20 }])
+})
