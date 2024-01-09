@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { response } from 'express'
 
 const app = express()
 
@@ -6,7 +6,7 @@ app.use(express.json())
 
 const PORT = process.env.PORT || 3000
 
-const users = [{ id: 1, name: 'senya', age: 18 }, { id: 2 }]
+let users = [{ id: 1, name: 'senya', age: 18 }, { id: 2, name: 'alina', age: 19 }]
 
 app.listen(PORT, () => {
     console.log(`port is ${PORT}`)
@@ -41,5 +41,27 @@ app.post('/api/users', (req, res) => {
     users.push(newUser)
     console.log(users)
 
+    return res.status(201).send(newUser)
+})
+
+app.put('/api/users/:id', (req, res) => {
+    const { body, params: { id } } = req;
+    // body contains a data to update
+    // id is id of user that we wanna update
+    // it's always string, but id is a number in our 'db' -> so let's parse it
+    const parsedId = parseInt(id)
+    // if id is not a number, or contains characters, it's invalid, so we just return 400
+    if (isNaN(parsedId)) return res.sendStatus(400)
+
+    // now let's find the user with that id
+    const userId = users.findIndex(user => user.id === parsedId)
+    console.log(body, userId)
+    // if not found, return 404 - not found error
+    if (userId === -1) return res.sendStatus(404)
+
+    // in PUT method we update ENTIRE record (in PATCH, on the other hand, we update partially)
+    // if user didn't pass certain properties, we don't care, we update what he told to update, other properties will become null
+
+    users[userId] = { id: parsedId, ...body }
     return res.sendStatus(200)
 })
