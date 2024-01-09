@@ -6,7 +6,7 @@ app.use(express.json())
 
 const PORT = process.env.PORT || 3000
 
-const users = [{ id: 1, name: 'senya', age: 18 }, { id: 20 }]
+const users = [{ id: 1, name: 'senya', age: 18 }, { id: 2 }]
 
 app.listen(PORT, () => {
     console.log(`port is ${PORT}`)
@@ -33,6 +33,13 @@ app.get('/api/users/:id', (req, res) => {
 })
 
 app.post('/api/users', (req, res) => {
-    console.log(req.body)
+    // here we can, for example, create a new record in db
+    const newUser = {
+        id: users.length ? users[users.length - 1].id + 1 : 1,
+        ...req.body
+    }
+    users.push(newUser)
+    console.log(users)
+
     return res.sendStatus(200)
 })
