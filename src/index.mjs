@@ -2,6 +2,8 @@ import express from 'express'
 
 const app = express()
 
+app.use(express.json())
+
 const PORT = process.env.PORT || 3000
 
 const users = [{ id: 1, name: 'senya', age: 18 }, { id: 20 }]
@@ -31,6 +33,6 @@ app.get('/api/users/:id', (req, res) => {
 })
 
 app.post('/api/users', (req, res) => {
-    console.log(req)
+    console.log(req.body)
     return res.sendStatus(200)
 })
