@@ -29,3 +29,8 @@ app.get('/api/users/:id', (req, res) => {
     if (!user) return res.status(404)
     return res.send(user)
 })
+
+app.post('/api/users', (req, res) => {
+    console.log(req)
+    return res.sendStatus(200)
+})
