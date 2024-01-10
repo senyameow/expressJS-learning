@@ -65,3 +65,28 @@ app.put('/api/users/:id', (req, res) => {
     users[userId] = { id: parsedId, ...body }
     return res.sendStatus(200)
 })
+
+// for example we have a user on our site.
+// user decided to change his username
+// we don't have to change the whole instance of that user
+// in this case we would use PATCH request
+
+app.patch('/api/users/:id', (req, res) => {
+    const { body, params: { id } } = req
+    const parsedId = parseInt(id)
+    if (isNaN(parsedId)) return res.sendStatus(400) // incorrect id
+
+    // find user to update
+    const userIndex = users.findIndex(user => user.id === parsedId)
+    // if not found send 404 error
+    if (userIndex === -1) return res.sendStatus(404)
+
+    // if found, update ONLY THOSE PROPERTIES that are in body
+    const oldUser = users[userIndex]
+    // first spread oldProperties and then overwrite them by spreading body object
+    users[userIndex] = { ...oldUser, ...body }
+    console.log(users)
+
+    return res.sendStatus(200)
+
+})
