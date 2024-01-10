@@ -88,5 +88,17 @@ app.patch('/api/users/:id', (req, res) => {
     console.log(users)
 
     return res.sendStatus(200)
+})
 
+app.delete('/api/users/:id', (req, res) => {
+    const { body, params: { id } } = req
+    const parsedId = parseInt(id)
+    if (isNaN(parsedId)) return res.sendStatus(400)
+
+    const userIndex = users.findIndex(user => user.id === parsedId)
+    if (userIndex === -1) return res.sendStatus(404)
+
+    users.splice(userIndex, 1)
+    console.log(users)
+    return res.sendStatus(200)
 })
