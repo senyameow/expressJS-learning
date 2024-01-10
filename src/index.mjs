@@ -22,9 +22,27 @@ const middleware = (req, res, next) => {
 // 1
 // app.use(middleware)
 // now if I call /api/users/1 with DELETE method, it will log DELETE--/api/users/1, and it works with every route
+// when using app.use(), we can pass as much middlewares as we want
+// 1 more important thing is that app.use() should be written before route that uses it, otherwise it's not gonna be called
 
 // 2
 // to use it for a specific route, pass middleware function as a second param
+
+// in many routes below we have repeated code that can be defined as a middleware function
+
+const resolveUserById = (req, res, next) => {
+    const { body, params: { id } } = req
+    const parsedId = parseInt(id)
+    if (isNaN(parsedId)) return res.sendStatus(400) // incorrect id
+
+    // find user to update
+    const userIndex = users.findIndex(user => user.id === parsedId)
+    // if not found send 404 error
+    if (userIndex === -1) return res.sendStatus(404)
+    req.userIndex = userIndex
+    req.parsedId = parsedId
+    next()
+}
 
 app.listen(PORT, () => {
     console.log(`port is ${PORT}`)
@@ -78,26 +96,28 @@ app.post('/api/users', (req, res) => {
     return res.status(201).send(newUser)
 })
 
-app.put('/api/users/:id', (req, res) => {
-    const { body, params: { id } } = req;
-    // body contains a data to update
-    // id is id of user that we wanna update
-    // it's always string, but id is a number in our 'db' -> so let's parse it
-    const parsedId = parseInt(id)
-    // if id is not a number, or contains characters, it's invalid, so we just return 400
-    if (isNaN(parsedId)) return res.sendStatus(400)
+app.put('/api/users/:id', resolveUserById, (req, res) => {
+    const { body } = req;
+    // // body contains a data to update
+    // // id is id of user that we wanna update
+    // // it's always string, but id is a number in our 'db' -> so let's parse it
+    // const parsedId = parseInt(id)
+    // // if id is not a number, or contains characters, it's invalid, so we just return 400
+    // if (isNaN(parsedId)) return res.sendStatus(400)
 
-    // now let's find the user with that id
-    const userId = users.findIndex(user => user.id === parsedId)
-    console.log(body, userId)
-    // if not found, return 404 - not found error
-    if (userId === -1) return res.sendStatus(404)
+    // // now let's find the user with that id
+    // const userId = users.findIndex(user => user.id === parsedId)
+    // console.log(body, userId)
+    // // if not found, return 404 - not found error
+    // if (userId === -1) return res.sendStatus(404)
+
+
 
     // in PUT method we update ENTIRE record (in PATCH, on the other hand, we update partially)
     // if user didn't pass certain properties, we don't care, we update what he told to update, other properties will become null
 
-    users[userId] = { id: parsedId, ...body }
-    return res.sendStatus(200)
+    users[req.userIndex] = { id: req.parsedId, ...body }
+    return res.send(users)
 })
 
 // for example we have a user on our site.
@@ -105,15 +125,8 @@ app.put('/api/users/:id', (req, res) => {
 // we don't have to change the whole instance of that user
 // in this case we would use PATCH request
 
-app.patch('/api/users/:id', (req, res) => {
-    const { body, params: { id } } = req
-    const parsedId = parseInt(id)
-    if (isNaN(parsedId)) return res.sendStatus(400) // incorrect id
+app.patch('/api/users/:id', resolveUserById, (req, res) => {
 
-    // find user to update
-    const userIndex = users.findIndex(user => user.id === parsedId)
-    // if not found send 404 error
-    if (userIndex === -1) return res.sendStatus(404)
 
     // if found, update ONLY THOSE PROPERTIES that are in body
     const oldUser = users[userIndex]
