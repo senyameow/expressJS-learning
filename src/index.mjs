@@ -34,6 +34,22 @@ app.get('/', middleware, (req, res) => {
     res.status(201).send({ message: 'dont give up' })
 }) // and now middleware works only when i go to the '/'
 
+// we can even pass more than one middleware to a route, the previous middleware function has an OPTION to call next middleware
+// by using next()
+// it can be usefull in situations like sign-in, where if we can't find user's hash, we don't wanna next logic to execute, so we don't call next
+
+app.post('/', (req, res, next) => {
+    const { body } = req
+    res.send(body.message)
+    if (body.message.includes('next')) next()
+}, (req, res) => {
+    const { body } = req
+    console.log(body)
+}, (req, res) => {
+    res.status(201)
+}) // and now middleware works only when i go to the '/'
+
+
 app.get('/api/users', (req, res) => {
     const { query: { filter, value } } = req
     console.log(filter, value)
