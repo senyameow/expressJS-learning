@@ -8,13 +8,31 @@ const PORT = process.env.PORT || 3000
 
 let users = [{ id: 1, name: 'senya', age: 18 }, { id: 2, name: 'alina', age: 19 }]
 
+// middleware
+
+// create a middleware function
+const middleware = (req, res, next) => {
+    console.log(`${req.method}--${req.url}`)
+    next()
+}
+// we can use middleware 2 different ways
+// 1. assign it to all routes
+// 2. assign to a specific route / routes
+
+// 1
+// app.use(middleware)
+// now if I call /api/users/1 with DELETE method, it will log DELETE--/api/users/1, and it works with every route
+
+// 2
+// to use it for a specific route, pass middleware function as a second param
+
 app.listen(PORT, () => {
     console.log(`port is ${PORT}`)
 })
 
-app.get('/', (req, res) => {
+app.get('/', middleware, (req, res) => {
     res.status(201).send({ message: 'dont give up' })
-})
+}) // and now middleware works only when i go to the '/'
 
 app.get('/api/users', (req, res) => {
     const { query: { filter, value } } = req
@@ -91,6 +109,7 @@ app.patch('/api/users/:id', (req, res) => {
 })
 
 app.delete('/api/users/:id', (req, res) => {
+    // in DELETE requests we don't really need any payload body, but sometimes it can be usefull
     const { body, params: { id } } = req
     const parsedId = parseInt(id)
     if (isNaN(parsedId)) return res.sendStatus(400)
