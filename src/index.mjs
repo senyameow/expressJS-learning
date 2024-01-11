@@ -69,7 +69,7 @@ app.post('/', (req, res, next) => {
 }) // and now middleware works only when i go to the '/'
 
 
-app.get('/api/users', (req, res) => {
+app.get('/api/users', query('filter').isString(), (req, res) => {
     const { query: { filter, value } } = req
     console.log(filter, value)
     if (filter && value) return res.send(users.filter(u => u?.[filter]?.includes(value)))
