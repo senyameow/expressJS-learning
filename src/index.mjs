@@ -1,4 +1,5 @@
 import express, { response } from 'express'
+import { query } from 'express-validator'
 
 const app = express()
 
@@ -150,3 +151,4 @@ app.delete('/api/users/:id', (req, res) => {
     console.log(users)
     return res.sendStatus(200)
 })
+
