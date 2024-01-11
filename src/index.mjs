@@ -1,5 +1,5 @@
 import express, { response } from 'express'
-import { query } from 'express-validator'
+import { query, validationResult } from 'express-validator'
 
 const app = express()
 
@@ -69,7 +69,9 @@ app.post('/', (req, res, next) => {
 }) // and now middleware works only when i go to the '/'
 
 
-app.get('/api/users', query('filter').isString(), (req, res) => {
+app.get('/api/users', query('filter').isString().notEmpty(), (req, res) => {
+    const result = validationResult(req)
+    console.log(result)
     const { query: { filter, value } } = req
     console.log(filter, value)
     if (filter && value) return res.send(users.filter(u => u?.[filter]?.includes(value)))
