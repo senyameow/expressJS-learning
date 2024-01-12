@@ -1,5 +1,5 @@
 import express, { request, response } from 'express'
-import { query, validationResult, body as bodyValidator } from 'express-validator'
+import { query, validationResult, body as bodyValidator, matchedData } from 'express-validator'
 
 const app = express()
 
@@ -89,9 +89,15 @@ app.get('/api/users/:id', (req, res) => {
 
 // to validate body, we need to import body from validator similar as we did with query
 
-app.post('/api/users', bodyValidator('username').isEmpty().withMessage('username cannot be empty').isLength({ min: 3, max: 10 }).withMessage('username must be between 3 and 10 characters').isString().withMessage('username must be a string'), (req, res) => {
+app.post('/api/users', bodyValidator('name').notEmpty().withMessage('name cannot be empty').isLength({ min: 3, max: 10 }).withMessage('name must be between 3 and 10 characters').isString().withMessage('name must be a string'), (req, res) => {
     // here we can, for example, create a new record in db
     const result = validationResult(req)
+    if (!result.isEmpty()) return res.status(400).send({ errors: result.array() })
+
+    // we can grab fields that were validated, so we assume that these properties are 100 correct
+    const data = matchedData(req)
+    console.log(data)
+
     console.log(result)
     const newUser = {
         id: users.length ? users[users.length - 1].id + 1 : 1,
@@ -102,6 +108,8 @@ app.post('/api/users', bodyValidator('username').isEmpty().withMessage('username
 
     return res.status(201).send(newUser)
 })
+
+// but if we want to validate multiple fields in body object, we can pass an array of functions
 
 app.put('/api/users/:id', resolveUserById, (req, res) => {
     const { body } = req;
