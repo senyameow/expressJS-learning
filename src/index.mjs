@@ -1,5 +1,6 @@
 import express, { request, response } from 'express'
-import { query, validationResult, body as bodyValidator, matchedData } from 'express-validator'
+import { query, validationResult, body as bodyValidator, matchedData, checkSchema } from 'express-validator'
+import { createUserSchema } from './utils/schemas'
 
 const app = express()
 
@@ -89,7 +90,7 @@ app.get('/api/users/:id', (req, res) => {
 
 // to validate body, we need to import body from validator similar as we did with query
 
-app.post('/api/users', bodyValidator('name').notEmpty().withMessage('name cannot be empty').isLength({ min: 3, max: 10 }).withMessage('name must be between 3 and 10 characters').isString().withMessage('name must be a string'), (req, res) => {
+app.post('/api/users', checkSchema(createUserSchema), (req, res) => {
     // here we can, for example, create a new record in db
     const result = validationResult(req)
     if (!result.isEmpty()) return res.status(400).send({ errors: result.array() })
@@ -108,6 +109,8 @@ app.post('/api/users', bodyValidator('name').notEmpty().withMessage('name cannot
 
     return res.status(201).send(newUser)
 })
+
+// we validated query and body, but it's all the same, we just import what we want to validate and do the same
 
 // but if we want to validate multiple fields in body object, we can pass an array of functions
 
