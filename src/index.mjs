@@ -69,7 +69,7 @@ app.post('/', (req, res, next) => {
 }) // and now middleware works only when i go to the '/'
 
 
-app.get('/api/users', query('filter').isString().notEmpty(), (req, res) => {
+app.get('/api/users', query('filter').isString().notEmpty().isLength({ min: 1, max: 10 }).withMessage('incorrect length'), (req, res) => {
     const result = validationResult(req)
     console.log(result)
     const { query: { filter, value } } = req
