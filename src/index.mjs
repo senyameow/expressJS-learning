@@ -1,5 +1,5 @@
-import express, { response } from 'express'
-import { query, validationResult } from 'express-validator'
+import express, { request, response } from 'express'
+import { query, validationResult, body as bodyValidator } from 'express-validator'
 
 const app = express()
 
@@ -87,8 +87,12 @@ app.get('/api/users/:id', (req, res) => {
     return res.send(user)
 })
 
-app.post('/api/users', (req, res) => {
+// to validate body, we need to import body from validator similar as we did with query
+
+app.post('/api/users', bodyValidator('username').isEmpty().withMessage('username cannot be empty').isLength({ min: 3, max: 10 }).withMessage('username must be between 3 and 10 characters').isString().withMessage('username must be a string'), (req, res) => {
     // here we can, for example, create a new record in db
+    const result = validationResult(req)
+    console.log(result)
     const newUser = {
         id: users.length ? users[users.length - 1].id + 1 : 1,
         ...req.body
