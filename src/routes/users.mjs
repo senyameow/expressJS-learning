@@ -1,8 +1,9 @@
 // router helps to organize routes.
 // as app grows, we can have dozens of api endpoints, and it would be nice to separate them
 
-import { Router, query } from 'express'
-import { validationResult } from 'express-validator'
+import { Router } from 'express'
+import { query, validationResult, body as bodyValidator, matchedData, checkSchema } from 'express-validator'
+import { users } from '../utils/constants.mjs'
 
 const router = Router()
 

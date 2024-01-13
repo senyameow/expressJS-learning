@@ -2,7 +2,7 @@ import express, { request, response } from 'express'
 import { query, validationResult, body as bodyValidator, matchedData, checkSchema } from 'express-validator'
 import { createUserSchema } from './utils/schemas.mjs'
 import usersRouter from './routes/users.mjs'
-import { mockUsers } from './utils/constants.mjs'
+import { users } from './utils/constants.mjs'
 
 const app = express()
 
