@@ -86,25 +86,7 @@ app.get('/api/users/:id', (req, res) => {
 
 // to validate body, we need to import body from validator similar as we did with query
 
-app.post('/api/users', checkSchema(createUserSchema), (req, res) => {
-    // here we can, for example, create a new record in db
-    const result = validationResult(req)
-    if (!result.isEmpty()) return res.status(400).send({ errors: result.array() })
 
-    // we can grab fields that were validated, so we assume that these properties are 100 correct
-    const data = matchedData(req)
-    console.log(data)
-
-    console.log(result)
-    const newUser = {
-        id: users.length ? users[users.length - 1].id + 1 : 1,
-        ...req.body
-    }
-    users.push(newUser)
-    console.log(users)
-
-    return res.status(201).send(newUser)
-})
 
 // we validated query and body, but it's all the same, we just import what we want to validate and do the same
 
