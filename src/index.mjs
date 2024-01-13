@@ -1,14 +1,20 @@
 import express, { request, response } from 'express'
 import { query, validationResult, body as bodyValidator, matchedData, checkSchema } from 'express-validator'
-import { createUserSchema } from './utils/schemas'
+import { createUserSchema } from './utils/schemas.mjs'
+import usersRouter from './routes/users.mjs'
+import { mockUsers } from './utils/constants.mjs'
 
 const app = express()
 
+
 app.use(express.json())
+// so to use router now, we need to create it first
+// then import
+// and then app.use(*router)
+app.use(usersRouter)
 
 const PORT = process.env.PORT || 3000
 
-let users = [{ id: 1, name: 'senya', age: 18 }, { id: 2, name: 'alina', age: 19 }]
 
 // middleware
 
@@ -68,16 +74,6 @@ app.post('/', (req, res, next) => {
 }, (req, res) => {
     res.status(201)
 }) // and now middleware works only when i go to the '/'
-
-
-app.get('/api/users', query('filter').isString().notEmpty().isLength({ min: 1, max: 10 }).withMessage('incorrect length'), (req, res) => {
-    const result = validationResult(req)
-    console.log(result)
-    const { query: { filter, value } } = req
-    console.log(filter, value)
-    if (filter && value) return res.send(users.filter(u => u?.[filter]?.includes(value)))
-    return res.send(users)
-})
 
 app.get('/api/users/:id', (req, res) => {
     const parsedId = parseInt(req.params.id)
