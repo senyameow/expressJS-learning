@@ -37,4 +37,65 @@ router.post('/api/users', checkSchema(createUserSchema), (req, res) => {
     return res.status(201).send(newUser)
 })
 
+router.get('/api/users/:id', (req, res) => {
+    const parsedId = parseInt(req.params.id)
+    if (isNaN(parsedId)) return res.status(400).send({ message: 'bad request' })
+
+    const user = users.find(user => user.id === parsedId)
+    if (!user) return res.status(404)
+    return res.send(user)
+})
+
+router.put('/api/users/:id', resolveUserById, (req, res) => {
+    const { body } = req;
+    // // body contains a data to update
+    // // id is id of user that we wanna update
+    // // it's always string, but id is a number in our 'db' -> so let's parse it
+    // const parsedId = parseInt(id)
+    // // if id is not a number, or contains characters, it's invalid, so we just return 400
+    // if (isNaN(parsedId)) return res.sendStatus(400)
+
+    // // now let's find the user with that id
+    // const userId = users.findIndex(user => user.id === parsedId)
+    // console.log(body, userId)
+    // // if not found, return 404 - not found error
+    // if (userId === -1) return res.sendStatus(404)
+
+
+
+    // in PUT method we update ENTIRE record (in PATCH, on the other hand, we update partially)
+    // if user didn't pass certain properties, we don't care, we update what he told to update, other properties will become null
+
+    users[req.userIndex] = { id: req.parsedId, ...body }
+    return res.send(users)
+})
+
+router.patch('/api/users/:id', resolveUserById, (req, res) => {
+
+
+    // if found, update ONLY THOSE PROPERTIES that are in body
+    const oldUser = users[userIndex]
+    // first spread oldProperties and then overwrite them by spreading body object
+    users[userIndex] = { ...oldUser, ...body }
+    console.log(users)
+
+    return res.sendStatus(200)
+})
+
+router.delete('/api/users/:id', (req, res) => {
+    // in DELETE requests we don't really need any payload body, but sometimes it can be usefull
+    const { body, params: { id } } = req
+    const parsedId = parseInt(id)
+    if (isNaN(parsedId)) return res.sendStatus(400)
+
+    const userIndex = users.findIndex(user => user.id === parsedId)
+    if (userIndex === -1) return res.sendStatus(404)
+
+    users.splice(userIndex, 1)
+    console.log(users)
+    return res.sendStatus(200)
+})
+
+
+
 export default router

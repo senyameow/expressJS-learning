@@ -3,6 +3,7 @@ import { query, validationResult, body as bodyValidator, matchedData, checkSchem
 import { createUserSchema } from './utils/schemas.mjs'
 import usersRouter from './routes/users.mjs'
 import { users } from './utils/constants.mjs'
+import { resolveUserById } from './routes/middlewares.mjs'
 
 const app = express()
 
@@ -38,19 +39,6 @@ const middleware = (req, res, next) => {
 
 // in many routes below we have repeated code that can be defined as a middleware function
 
-const resolveUserById = (req, res, next) => {
-    const { body, params: { id } } = req
-    const parsedId = parseInt(id)
-    if (isNaN(parsedId)) return res.sendStatus(400) // incorrect id
-
-    // find user to update
-    const userIndex = users.findIndex(user => user.id === parsedId)
-    // if not found send 404 error
-    if (userIndex === -1) return res.sendStatus(404)
-    req.userIndex = userIndex
-    req.parsedId = parsedId
-    next()
-}
 
 app.listen(PORT, () => {
     console.log(`port is ${PORT}`)
@@ -75,14 +63,7 @@ app.post('/', (req, res, next) => {
     res.status(201)
 }) // and now middleware works only when i go to the '/'
 
-app.get('/api/users/:id', (req, res) => {
-    const parsedId = parseInt(req.params.id)
-    if (isNaN(parsedId)) return res.status(400).send({ message: 'bad request' })
 
-    const user = users.find(user => user.id === parsedId)
-    if (!user) return res.status(404)
-    return res.send(user)
-})
 
 // to validate body, we need to import body from validator similar as we did with query
 
@@ -92,58 +73,10 @@ app.get('/api/users/:id', (req, res) => {
 
 // but if we want to validate multiple fields in body object, we can pass an array of functions
 
-app.put('/api/users/:id', resolveUserById, (req, res) => {
-    const { body } = req;
-    // // body contains a data to update
-    // // id is id of user that we wanna update
-    // // it's always string, but id is a number in our 'db' -> so let's parse it
-    // const parsedId = parseInt(id)
-    // // if id is not a number, or contains characters, it's invalid, so we just return 400
-    // if (isNaN(parsedId)) return res.sendStatus(400)
-
-    // // now let's find the user with that id
-    // const userId = users.findIndex(user => user.id === parsedId)
-    // console.log(body, userId)
-    // // if not found, return 404 - not found error
-    // if (userId === -1) return res.sendStatus(404)
-
-
-
-    // in PUT method we update ENTIRE record (in PATCH, on the other hand, we update partially)
-    // if user didn't pass certain properties, we don't care, we update what he told to update, other properties will become null
-
-    users[req.userIndex] = { id: req.parsedId, ...body }
-    return res.send(users)
-})
 
 // for example we have a user on our site.
 // user decided to change his username
 // we don't have to change the whole instance of that user
 // in this case we would use PATCH request
 
-app.patch('/api/users/:id', resolveUserById, (req, res) => {
-
-
-    // if found, update ONLY THOSE PROPERTIES that are in body
-    const oldUser = users[userIndex]
-    // first spread oldProperties and then overwrite them by spreading body object
-    users[userIndex] = { ...oldUser, ...body }
-    console.log(users)
-
-    return res.sendStatus(200)
-})
-
-app.delete('/api/users/:id', (req, res) => {
-    // in DELETE requests we don't really need any payload body, but sometimes it can be usefull
-    const { body, params: { id } } = req
-    const parsedId = parseInt(id)
-    if (isNaN(parsedId)) return res.sendStatus(400)
-
-    const userIndex = users.findIndex(user => user.id === parsedId)
-    if (userIndex === -1) return res.sendStatus(404)
-
-    users.splice(userIndex, 1)
-    console.log(users)
-    return res.sendStatus(200)
-})
 
