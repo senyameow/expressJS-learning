@@ -83,3 +83,7 @@ app.post('/', (req, res, next) => {
 
 // cookies will be available every time we send a request!
 // they can be really usefull
+
+// they are important because by default HTTP is stateless.
+// whenever you make a request server does not know who is that request is comming from
+// it knows nothing
