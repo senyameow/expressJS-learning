@@ -87,3 +87,10 @@ app.post('/', (req, res, next) => {
 // they are important because by default HTTP is stateless.
 // whenever you make a request server does not know who is that request is comming from
 // it knows nothing
+
+// so example:
+// I wanna implement ecommerce web-site, and I also wanna implement a cart system, where user can store items and delete them.
+// and main function is, when user goes to the website, add item, close site, and come back, item is still in his cart
+
+// without cookies server doesn't know who user is, what items he saved
+// with cookies, I can send them back to the server then will know who that user is, and it will help identify user, and all items will remain in his cart
