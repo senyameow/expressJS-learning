@@ -5,6 +5,7 @@ import { Router } from 'express'
 import { query, validationResult, body as bodyValidator, matchedData, checkSchema } from 'express-validator'
 import { users } from '../utils/constants.mjs'
 import { createUserSchema } from '../utils/schemas.mjs'
+import { resolveUserById } from './middlewares.mjs'
 
 const router = Router()
 
