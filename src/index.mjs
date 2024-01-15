@@ -80,3 +80,6 @@ app.post('/', (req, res, next) => {
 // in this case we would use PATCH request
 
 
+
+// cookies will be available every time we send a request!
+// they can be really usefull
