@@ -4,6 +4,7 @@ import { createUserSchema } from './utils/schemas.mjs'
 import usersRouter from './routes/users.mjs'
 import productsRouter from './routes/products.mjs'
 import { users } from './utils/constants.mjs'
+import cookieParser from 'cookie-parser'
 
 const app = express()
 
@@ -12,6 +13,10 @@ app.use(express.json())
 // so to use router now, we need to create it first
 // then import
 // and then app.use(*router)
+
+// register parser before routes
+app.use(cookieParser())
+
 app.use(usersRouter)
 app.use(productsRouter)
 
