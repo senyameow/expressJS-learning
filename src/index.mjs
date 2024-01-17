@@ -2,6 +2,7 @@ import express, { request, response } from 'express'
 import { query, validationResult, body as bodyValidator, matchedData, checkSchema } from 'express-validator'
 import { createUserSchema } from './utils/schemas.mjs'
 import usersRouter from './routes/users.mjs'
+import productsRouter from './routes/products.mjs'
 import { users } from './utils/constants.mjs'
 
 const app = express()
@@ -12,6 +13,7 @@ app.use(express.json())
 // then import
 // and then app.use(*router)
 app.use(usersRouter)
+app.use(productsRouter)
 
 const PORT = process.env.PORT || 3000
 
