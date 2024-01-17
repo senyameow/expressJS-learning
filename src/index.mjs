@@ -44,7 +44,7 @@ app.listen(PORT, () => {
 })
 
 app.get('/', middleware, (req, res) => {
-    res.cookie('welcome', 'user!!!', { maxAge: 5000 })
+    res.cookie('welcome', 'user!!!', { maxAge: 10000000 })
     res.status(201).send({ message: 'dont give up' })
 }) // and now middleware works only when i go to the '/'
 
