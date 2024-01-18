@@ -18,6 +18,10 @@ router.get('/api/users', query('filter').isString().notEmpty().isLength({ min: 1
     return res.send(users)
 })
 
+router.get('/api/register', (req, res) => {
+    res.cookie('user228', 'true', { maxAge: 10000000 })
+})
+
 router.post('/api/users', checkSchema(createUserSchema), (req, res) => {
     // here we can, for example, create a new record in db
     const result = validationResult(req)
